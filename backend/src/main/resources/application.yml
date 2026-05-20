@@ -87,6 +87,10 @@ app:
     secret-key: ${MINIO_SECRET_KEY:minioadmin}
     bucket: ${MINIO_BUCKET:learning-materials}
 
+  ai:
+    groq:
+      api-key: ${OPENAI_API_KEY:}
+
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
 
