@@ -73,7 +73,7 @@ app:
   security:
     jwt:
       issuer: ${JWT_ISSUER:ai-elearning}
-      secret: ${JWT_SECRET:change-this-development-secret-change-this}
+      secret: ${JWT_SECRET:dev-jwt-secret-must-be-at-least-256-bits-long-for-hs256-algorithm-change-in-prod}
       access-token-ttl-minutes: ${JWT_ACCESS_TOKEN_TTL_MINUTES:60}
 
   storage:

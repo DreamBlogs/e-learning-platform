@@ -2,8 +2,13 @@ package com.example.learning.rag.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.example.learning.materials.domain.Material;
+import com.example.learning.materials.domain.MaterialStatus;
+import com.example.learning.materials.infrastructure.MaterialRepository;
 import com.example.learning.rag.domain.ContentChunk;
 import com.example.learning.rag.infrastructure.ContentChunkRepository;
+import com.example.learning.subjects.domain.Subject;
+import com.example.learning.subjects.infrastructure.SubjectRepository;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +32,30 @@ class SemanticSearchServiceIntegrationTest {
     @Autowired
     private ContentChunkRepository chunkRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
+    private MaterialRepository materialRepository;
+
     private UUID subjectId;
     private UUID materialId;
 
     @BeforeEach
     void setUp() {
-        subjectId = UUID.randomUUID();
-        materialId = UUID.randomUUID();
+        Subject subject = new Subject(UUID.randomUUID(), "Test Subject", "Test Description", "#FF0000");
+        subjectRepository.save(subject);
+        subjectId = subject.getId();
+
+        Material material = new Material(
+                subjectId,
+                "test.pdf",
+                "application/pdf",
+                "test-storage-key",
+                1024L
+        );
+        materialRepository.save(material);
+        materialId = material.getId();
     }
 
     @Test

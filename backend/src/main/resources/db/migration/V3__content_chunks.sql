@@ -10,7 +10,7 @@ CREATE TABLE content_chunks (
 );
 
 CREATE INDEX idx_content_chunks_material_id ON content_chunks(material_id);
-CREATE INDEX idx_content_chunks_embedding ON content_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+CREATE INDEX idx_content_chunks_embedding ON content_chunks USING hnsw (embedding vector_cosine_ops);
 
 COMMENT ON TABLE content_chunks IS 'Stores text chunks and their embeddings for semantic search';
 COMMENT ON COLUMN content_chunks.chunk_index IS 'Sequential index to preserve chunk order within a material';

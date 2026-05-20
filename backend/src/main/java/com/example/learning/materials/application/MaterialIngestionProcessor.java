@@ -77,19 +77,19 @@ public class MaterialIngestionProcessor {
                         materialId, extractedText.pageCount(), extractedText.text().length(),
                         vectorStorageService.getChunkCount(materialId));
             } catch (Exception ragException) {
-                log.error("RAG pipeline failed but text extraction succeeded. materialId={}, error={}",
+                log.error("RAG pipeline failed. materialId={}, error={}",
                         materialId, ragException.getMessage(), ragException);
-                material.markProcessed();
-                log.warn("Material marked as processed despite RAG failure. materialId={}", materialId);
+                material.markFailed("RAG pipeline error: " + ragException.getMessage());
+                log.warn("Material marked as failed due to RAG failure. materialId={}", materialId);
             }
         } catch (BusinessException exception) {
             material.markFailed(exception.getMessage());
             log.warn("Material processing failed. materialId={}, code={}, message={}",
                     materialId, exception.getCode(), exception.getMessage());
         } catch (RuntimeException exception) {
+            material.markFailed(exception.getMessage());
             log.error("Material processing failed with runtime exception. materialId={}, error={}",
                     materialId, exception.getMessage(), exception);
-            throw exception;
         } catch (Exception exception) {
             log.error("Material processing failed with unexpected exception. materialId={}, error={}",
                     materialId, exception.getMessage(), exception);

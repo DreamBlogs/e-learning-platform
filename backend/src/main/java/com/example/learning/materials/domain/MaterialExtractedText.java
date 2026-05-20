@@ -24,7 +24,7 @@ public class MaterialExtractedText extends AuditableEntity {
     private Integer pageCount;
 
     @Column(name = "character_count", nullable = false)
-    private int characterCount;
+    private long characterCount;
 
     protected MaterialExtractedText() {
     }
@@ -53,7 +53,7 @@ public class MaterialExtractedText extends AuditableEntity {
         return pageCount;
     }
 
-    public int getCharacterCount() {
+    public long getCharacterCount() {
         return characterCount;
     }
 

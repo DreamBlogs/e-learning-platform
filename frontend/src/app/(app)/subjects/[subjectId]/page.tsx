@@ -22,6 +22,7 @@ import {
   Play,
 } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import {
   mockSubjects,
   mockTopicMastery,
@@ -96,12 +97,10 @@ export default function SubjectPage({ params }: SubjectPageProps) {
           </p>
         </div>
         <div className="ml-auto flex gap-2">
-          <Link href={`/subjects/${subjectId}/quizzes/new`}>
-            <Button variant="outline" className="gap-2">
-              <Sparkles className="h-4 w-4" />
-              Generate Quiz
-            </Button>
-          </Link>
+          <Button variant="outline" className="gap-2" onClick={() => alert("Quiz generation is not yet implemented")}>
+            <Sparkles className="h-4 w-4" />
+            Generate Quiz
+          </Button>
         </div>
       </div>
 
@@ -369,7 +368,7 @@ export default function SubjectPage({ params }: SubjectPageProps) {
                   </Link>
                 )) : (
                   <div className="py-12 text-center">
-                    <QuizIcon className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                    <HelpCircle className="mx-auto h-12 w-12 text-muted-foreground/50" />
                     <p className="mt-2 text-sm text-muted-foreground">
                       No quizzes taken yet
                     </p>
@@ -382,8 +381,4 @@ export default function SubjectPage({ params }: SubjectPageProps) {
       </Tabs>
     </div>
   );
-}
-
-function cn(...classes: (string | boolean | undefined | null)[]) {
-  return classes.filter(Boolean).join(" ");
 }

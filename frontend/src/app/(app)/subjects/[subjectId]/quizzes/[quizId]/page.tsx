@@ -16,6 +16,7 @@ import {
   Clock,
 } from "lucide-react";
 import { mockQuizQuestions } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 interface QuizPageProps {
   params: Promise<{ subjectId: string; quizId: string }>;
@@ -267,8 +268,4 @@ export default function QuizPage({ params }: QuizPageProps) {
       </div>
     </div>
   );
-}
-
-function cn(...classes: (string | boolean | undefined | null)[]) {
-  return classes.filter(Boolean).join(" ");
 }

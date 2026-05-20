@@ -34,6 +34,7 @@ import {
   mockTasks,
   mockGPATrends,
 } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 const container = {
   hidden: { opacity: 0 },
@@ -327,8 +328,4 @@ export default function DashboardPage() {
       </motion.div>
     </div>
   );
-}
-
-function cn(...classes: (string | boolean | undefined | null)[]) {
-  return classes.filter(Boolean).join(" ");
 }

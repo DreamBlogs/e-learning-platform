@@ -11,7 +11,13 @@ public class CurrentUserProvider {
 
     public CurrentUser get() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Jwt jwt = (Jwt) authentication.getPrincipal();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new IllegalStateException("No authentication context available");
+        }
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof Jwt jwt)) {
+            throw new IllegalStateException("Expected JWT principal but got: " + principal.getClass().getName());
+        }
         return new CurrentUser(UUID.fromString(jwt.getSubject()), jwt.getClaimAsString("email"));
     }
 }

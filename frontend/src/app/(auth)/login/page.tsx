@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Brain, Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -88,10 +87,9 @@ export default function LoginPage() {
             </form>
 
             <div className="mt-6 text-center text-sm">
-              <span className="text-muted-foreground">Don&apos;t have an account? </span>
-              <Link href="/register" className="text-primary hover:underline">
-                Sign up
-              </Link>
+              <span className="text-muted-foreground">
+                Registration is currently managed by administrators
+              </span>
             </div>
           </CardContent>
         </Card>
