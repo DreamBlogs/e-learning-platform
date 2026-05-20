@@ -45,7 +45,7 @@ public class SecurityConfig {
     JwtDecoder jwtDecoder(JwtTokenService tokenService) {
         SecretKey secretKey = tokenService.secretKey();
         return NimbusJwtDecoder.withSecretKey(secretKey)
-                .macAlgorithm(MacAlgorithm.HS256)
+                .macAlgorithm(MacAlgorithm.HS512)
                 .build();
     }
 
