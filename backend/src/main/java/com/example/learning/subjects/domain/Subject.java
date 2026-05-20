@@ -57,6 +57,10 @@ public class Subject extends AuditableEntity {
         return color;
     }
 
+    public String getCode() {
+        return name.length() > 10 ? name.substring(0, 10) : name;
+    }
+
     public void update(String name, String description, String color) {
         this.name = name;
         this.description = description;

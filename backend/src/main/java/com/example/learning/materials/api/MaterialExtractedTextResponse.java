@@ -8,7 +8,7 @@ public record MaterialExtractedTextResponse(
         UUID materialId,
         String textContent,
         Integer pageCount,
-        int characterCount,
+        long characterCount,
         Instant createdAt,
         Instant updatedAt
 ) {

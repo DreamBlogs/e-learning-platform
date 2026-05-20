@@ -62,10 +62,21 @@ function wait_for_port
 end
 
 # ---- Cleanup on exit --------------------------------------------
-function cleanup
+function cleanup --on-signal INT --on-signal TERM
+    log "Received interrupt signal, stopping all services..."
     if test -f $PID_FILE
+        set -l pids (cat $PID_FILE)
+        for pid in $pids
+            if kill -0 $pid 2>/dev/null
+                pkill -TERM -P $pid 2>/dev/null
+                kill -TERM $pid 2>/dev/null
+            end
+        end
         rm -f $PID_FILE
     end
+    compose down >/dev/null 2>&1
+    log "All services stopped."
+    exit 0
 end
 
 # ---- Start ------------------------------------------------------
@@ -129,3 +140,8 @@ log "MinIO:    http://localhost:9001 (minioadmin / minioadmin)"
 log ""
 log "Stop all: ./stop_all.fish"
 log "PIDs saved to: $PID_FILE"
+log ""
+log "Press Ctrl+C to stop all services."
+
+# Keep script alive so Ctrl+C works
+wait

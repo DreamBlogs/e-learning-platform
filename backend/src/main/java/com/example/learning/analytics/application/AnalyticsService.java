@@ -48,7 +48,7 @@ public class AnalyticsService {
         long quizCount = attemptRepository.findAllByUserIdOrderByCreatedAtDesc(userId).size();
 
         return new AnalyticsOverview(
-                Math.round(avgConfidence),
+                (int) Math.round(avgConfidence),
                 masteredTopics,
                 allTopics.size(),
                 weakestTopic,
@@ -70,7 +70,7 @@ public class AnalyticsService {
                             s.getName(),
                             s.getCode(),
                             s.getColor(),
-                            Math.round(avgConfidence),
+                            (int) Math.round(avgConfidence),
                             topics.size(),
                             quizCount
                     );

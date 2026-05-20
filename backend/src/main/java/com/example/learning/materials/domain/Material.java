@@ -125,7 +125,7 @@ public class Material extends AuditableEntity {
     }
 
     public Instant getCreatedAt() {
-        return createdAt;
+        return super.getCreatedAt();
     }
 
     public Instant getProcessedAt() {
