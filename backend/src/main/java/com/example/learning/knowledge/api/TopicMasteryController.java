@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,15 +26,5 @@ public class TopicMasteryController {
     @GetMapping("/subjects/{subjectId}/topics")
     public ApiResponse<List<TopicMasteryResponse>> getBySubject(@PathVariable UUID subjectId) {
         return ApiResponse.ok(masteryService.getBySubject(currentUserProvider.get().id(), subjectId));
-    }
-
-    @GetMapping("/analytics/weakest-topics")
-    public ApiResponse<List<TopicMasteryResponse>> getWeakest(@RequestParam(defaultValue = "5") int limit) {
-        return ApiResponse.ok(masteryService.getWeakest(currentUserProvider.get().id(), limit));
-    }
-
-    @GetMapping("/analytics/strongest-topics")
-    public ApiResponse<List<TopicMasteryResponse>> getStrongest(@RequestParam(defaultValue = "5") int limit) {
-        return ApiResponse.ok(masteryService.getStrongest(currentUserProvider.get().id(), limit));
     }
 }

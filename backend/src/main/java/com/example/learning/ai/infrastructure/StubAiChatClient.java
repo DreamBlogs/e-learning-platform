@@ -1,11 +1,11 @@
 package com.example.learning.ai.infrastructure;
 
 import com.example.learning.ai.application.AiClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service
-@ConditionalOnExpression("'${app.ai.groq.api-key:}'.isBlank() || '${app.ai.groq.api-key:}' == 'your-openai-api-key-here'")
+@ConditionalOnProperty(name = "app.ai.groq.api-key", havingValue = "", matchIfMissing = true)
 public class StubAiChatClient implements AiClient {
 
     @Override

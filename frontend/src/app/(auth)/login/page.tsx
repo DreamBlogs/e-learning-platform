@@ -7,16 +7,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Brain, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api/client";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/dashboard");
+    setError("");
+    setLoading(true);
+
+    try {
+      const { accessToken } = await api.post<{ accessToken: string }>("/auth/login", { email, password });
+      localStorage.setItem("token", accessToken);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,6 +58,11 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
+              {error && (
+                <div className="rounded-lg bg-red-500/10 p-3 text-sm text-red-500">
+                  {error}
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <input
@@ -73,23 +92,20 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
-              <Button type="submit" className="w-full">
-                Sign In
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
 
             <div className="mt-6 text-center text-sm">
-              <span className="text-muted-foreground">
-                Registration is currently managed by administrators
-              </span>
+              <span className="text-muted-foreground">Don&apos;t have an account? </span>
+              <a href="/register" className="text-primary hover:underline">
+                Sign up
+              </a>
             </div>
           </CardContent>
         </Card>

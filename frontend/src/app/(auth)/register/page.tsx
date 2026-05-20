@@ -6,21 +6,44 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Brain, Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api/client";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/dashboard");
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { accessToken } = await api.post<{ accessToken: string }>("/auth/register", {
+        email,
+        password,
+        displayName: name,
+      });
+      localStorage.setItem("token", accessToken);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,12 +65,15 @@ export default function RegisterPage() {
         <Card>
           <CardHeader>
             <CardTitle>Register</CardTitle>
-            <CardDescription>
-              Fill in your details to create a new account
-            </CardDescription>
+            <CardDescription>Fill in your details to create a new account</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleRegister} className="space-y-4">
+              {error && (
+                <div className="rounded-lg bg-red-500/10 p-3 text-sm text-red-500">
+                  {error}
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <input
@@ -83,17 +109,14 @@ export default function RegisterPage() {
                     placeholder="Create a password"
                     className="w-full rounded-lg border bg-background px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     required
+                    minLength={8}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
@@ -102,36 +125,33 @@ export default function RegisterPage() {
                 <div className="relative">
                   <input
                     id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirm ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm your password"
                     className="w-full rounded-lg border bg-background px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     required
+                    minLength={8}
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() => setShowConfirm(!showConfirm)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Creating account..." : "Create Account"}
               </Button>
             </form>
 
             <div className="mt-6 text-center text-sm">
               <span className="text-muted-foreground">Already have an account? </span>
-              <Link href="/login" className="text-primary hover:underline">
+              <a href="/login" className="text-primary hover:underline">
                 Sign in
-              </Link>
+              </a>
             </div>
           </CardContent>
         </Card>

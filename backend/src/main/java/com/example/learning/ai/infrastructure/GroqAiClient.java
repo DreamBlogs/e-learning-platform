@@ -12,9 +12,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
+@Primary
 public class GroqAiClient implements AiClient {
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
