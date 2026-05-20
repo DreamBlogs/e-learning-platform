@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class TextChunkingService {
 
-    private static final int MIN_CHUNK_SIZE = 500;
     private static final int MAX_CHUNK_SIZE = 1000;
     private static final int OVERLAP_SIZE = 100;
     private static final double CHARS_PER_TOKEN = 4.0;

@@ -1,5 +1,6 @@
 package com.example.learning.materials.domain;
 
+import com.example.learning.common.domain.AuditableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "materials")
-public class Material {
+public class Material extends AuditableEntity {
 
     @Id
     private UUID id;
@@ -41,9 +42,6 @@ public class Material {
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
     @Column(name = "processed_at")
     private Instant processedAt;
 
@@ -63,7 +61,6 @@ public class Material {
         this.storageKey = storageKey;
         this.sizeBytes = sizeBytes;
         this.status = MaterialStatus.UPLOADED;
-        this.createdAt = Instant.now();
     }
 
     public boolean isProcessed() {

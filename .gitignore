@@ -45,5 +45,6 @@ coverage/
 # Misc
 .pids
 *.pid
+.run_all.pids
 *.seed
 *.pid.lock

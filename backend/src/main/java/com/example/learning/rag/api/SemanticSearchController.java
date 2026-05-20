@@ -1,5 +1,6 @@
 package com.example.learning.rag.api;
 
+import com.example.learning.common.api.ApiResponse;
 import com.example.learning.common.application.CurrentUser;
 import com.example.learning.common.application.CurrentUserProvider;
 import com.example.learning.common.exception.ResourceNotFoundException;
@@ -10,7 +11,6 @@ import com.example.learning.subjects.infrastructure.SubjectRepository;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +36,7 @@ public class SemanticSearchController {
     }
 
     @PostMapping
-    public ResponseEntity<List<SearchResultResponse>> search(
+    public ApiResponse<List<SearchResultResponse>> search(
             @PathVariable UUID subjectId,
             @Valid @RequestBody SearchRequest request
     ) {
@@ -60,6 +60,6 @@ public class SemanticSearchController {
                 ))
                 .toList();
 
-        return ResponseEntity.ok(response);
+        return ApiResponse.ok(response);
     }
 }

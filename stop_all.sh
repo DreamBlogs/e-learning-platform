@@ -2,8 +2,6 @@
 # stop_all.sh – Stop all services started by run_all.sh
 # Usage: ./stop_all.sh
 
-set -e
-
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPOSE_FILE="$ROOT_DIR/infra/docker-compose.yml"
 PID_FILE="$ROOT_DIR/.run_all.pids"

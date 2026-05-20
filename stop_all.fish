@@ -46,9 +46,7 @@ end
 
 # ---- Stop -------------------------------------------------------
 if not test -f $PID_FILE
-    log "No PID file found — stopping processes on ports 8080 and 3000..."
-    free_port 8080
-    free_port 3000
+    log "No PID file found. Stopping Docker services anyway..."
     compose down
     exit 0
 end
@@ -63,9 +61,6 @@ for pid in $pids
 end
 
 rm -f $PID_FILE
-
-free_port 8080
-free_port 3000
 
 log "Stopping Docker Compose services..."
 compose down

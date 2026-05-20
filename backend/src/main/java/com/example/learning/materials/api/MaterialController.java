@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
 @RequestMapping("/api")
@@ -38,12 +39,17 @@ public class MaterialController {
         return ApiResponse.ok(materialService.create(currentUserProvider.get().id(), subjectId, request));
     }
 
+    private static final long MAX_FILE_SIZE = 50L * 1024 * 1024; // 50MB
+
     @PostMapping("/subjects/{subjectId}/materials/upload")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<MaterialResponse> upload(
             @PathVariable UUID subjectId,
             @RequestParam("file") MultipartFile file
     ) {
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new IllegalArgumentException("File size exceeds maximum allowed size of 50MB");
+        }
         return ApiResponse.ok(materialService.upload(currentUserProvider.get().id(), subjectId, file));
     }
 

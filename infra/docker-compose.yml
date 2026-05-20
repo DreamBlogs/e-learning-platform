@@ -2,10 +2,11 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     container_name: ai-elearning-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ai_elearning
       POSTGRES_USER: ai_learning
-      POSTGRES_PASSWORD: ai_learning
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ai_learning}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
@@ -19,6 +20,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: ai-elearning-redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
@@ -32,9 +34,10 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: ai-elearning-rabbitmq
+    restart: unless-stopped
     environment:
-      RABBITMQ_DEFAULT_USER: ai_learning
-      RABBITMQ_DEFAULT_PASS: ai_learning
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:-ai_learning}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-ai_learning}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -49,10 +52,11 @@ services:
   minio:
     image: minio/minio:RELEASE.2024-10-13T13-34-11Z
     container_name: ai-elearning-minio
+    restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -72,7 +76,7 @@ services:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-      until mc alias set local http://minio:9000 minioadmin minioadmin; do sleep 2; done;
+      until mc alias set local http://minio:9000 ${MINIO_ACCESS_KEY:-minioadmin} ${MINIO_SECRET_KEY:-minioadmin}; do sleep 2; done;
       mc mb --ignore-existing local/learning-materials;
       mc anonymous set none local/learning-materials;
       "
@@ -82,3 +86,7 @@ volumes:
   redis_data:
   rabbitmq_data:
   minio_data:
+
+networks:
+  default:
+    name: ai-elearning-network
