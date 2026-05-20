@@ -2,8 +2,8 @@
 
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useSubjects } from '@/hooks/useSubjects';
-import { useTasks } from '@/hooks/useTasks';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { TaskManager } from '@/components/task-manager';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -13,23 +13,11 @@ import {
   Clock,
   Target,
   AlertTriangle,
-  CheckCircle2,
   Sparkles,
   ArrowRight,
   Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from 'recharts';
 import { cn } from '@/lib/utils';
 
 const container = {
@@ -45,10 +33,9 @@ const item = {
 export default function DashboardPage() {
   const { user, loading: authLoading } = useRequireAuth();
   const { subjects, loading: subjectsLoading } = useSubjects();
-  const { tasks, loading: tasksLoading, toggleTask } = useTasks();
   const { overview, weakestTopics, loading: analyticsLoading } = useAnalytics();
 
-  const loading = authLoading || subjectsLoading || tasksLoading || analyticsLoading;
+  const loading = authLoading || subjectsLoading || analyticsLoading;
 
   if (loading) {
     return (
@@ -58,7 +45,6 @@ export default function DashboardPage() {
     );
   }
 
-  const pendingTasks = tasks.filter((t) => !t.completed).slice(0, 4);
   const masteredCount = subjects.filter((s) => (overview?.avgConfidence ?? 0) >= 80).length;
 
   return (
@@ -148,46 +134,10 @@ export default function DashboardPage() {
         <motion.div variants={container} initial="hidden" animate="show" className="lg:col-span-4">
           <Card>
             <CardHeader>
-              <CardTitle>Upcoming Tasks</CardTitle>
+              <CardTitle>Tasks</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {pendingTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className="flex items-start gap-3 rounded-lg border p-3 transition-colors hover:bg-accent/50"
-                  >
-                    <button
-                      onClick={() => toggleTask(task.id)}
-                      className="mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 border-muted-foreground/30 hover:border-primary"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{task.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {task.dueDate ? `Due ${new Date(task.dueDate).toLocaleDateString()}` : 'No due date'}
-                      </p>
-                    </div>
-                    <span
-                      className={cn(
-                        'rounded-full px-2 py-0.5 text-xs',
-                        task.priority === 'high'
-                          ? 'bg-red-500/10 text-red-500'
-                          : task.priority === 'medium'
-                          ? 'bg-amber-500/10 text-amber-500'
-                          : 'bg-blue-500/10 text-blue-500'
-                      )}
-                    >
-                      {task.priority}
-                    </span>
-                  </div>
-                ))}
-                {pendingTasks.length === 0 && (
-                  <div className="py-8 text-center text-sm text-muted-foreground">
-                    <CheckCircle2 className="mx-auto mb-2 h-8 w-8 text-emerald-500/50" />
-                    All tasks completed!
-                  </div>
-                )}
-              </div>
+              <TaskManager />
             </CardContent>
           </Card>
         </motion.div>
@@ -208,6 +158,11 @@ export default function DashboardPage() {
                     <Progress value={topic.confidence} className="h-2" />
                   </div>
                 ))}
+                {weakestTopics.length === 0 && (
+                  <div className="py-8 text-center text-sm text-muted-foreground">
+                    No weak topics identified
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

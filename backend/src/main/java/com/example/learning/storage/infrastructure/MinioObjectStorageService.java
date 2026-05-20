@@ -5,6 +5,7 @@ import com.example.learning.storage.application.ObjectStorageService;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import java.io.InputStream;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +43,18 @@ public class MinioObjectStorageService implements ObjectStorageService {
                     .build());
         } catch (Exception exception) {
             throw new InfrastructureException("STORAGE_DOWNLOAD_FAILED", "Failed to download object from storage", exception);
+        }
+    }
+
+    @Override
+    public void removeObject(String objectKey) {
+        try {
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(properties.bucket())
+                    .object(objectKey)
+                    .build());
+        } catch (Exception exception) {
+            throw new InfrastructureException("STORAGE_DELETE_FAILED", "Failed to delete object from storage", exception);
         }
     }
 }

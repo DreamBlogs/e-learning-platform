@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useTheme } from '@/components/theme-provider';
+import { SubjectsManager } from '@/components/subjects-manager';
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -81,7 +82,9 @@ export function AppSidebar() {
             </div>
           )}
 
-          {loading ? (
+          {!collapsed && <SubjectsManager />}
+
+          {collapsed && loading ? (
             <div className="flex justify-center py-4">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>

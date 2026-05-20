@@ -47,6 +47,7 @@ export interface QuizQuestion {
   optionB: string;
   optionC: string;
   optionD: string;
+  correctOption: string;
   explanation?: string;
   topic?: string;
   difficulty: 'easy' | 'medium' | 'hard';

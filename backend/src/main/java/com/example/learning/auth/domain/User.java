@@ -59,4 +59,12 @@ public class User extends AuditableEntity {
     public UserRole getRole() {
         return role;
     }
+
+    public void updateDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void updatePasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 }

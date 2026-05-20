@@ -12,10 +12,15 @@ import com.example.learning.processing.infrastructure.RabbitMqTopologyConfig;
 import com.example.learning.storage.application.ObjectStorageService;
 import com.example.learning.subjects.application.SubjectService;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -147,5 +152,25 @@ public class MaterialService {
         }
 
         publisher.run();
+    }
+
+    @Transactional
+    public void delete(UUID userId, UUID materialId) {
+        Material material = getOwnedMaterial(userId, materialId);
+        extractedTextRepository.findByMaterialId(materialId).ifPresent(extractedTextRepository::delete);
+        objectStorageService.removeObject(material.getStorageKey());
+        materialRepository.delete(material);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<org.springframework.core.io.Resource> download(UUID userId, UUID materialId) {
+        Material material = getOwnedMaterial(userId, materialId);
+        InputStream inputStream = objectStorageService.getObject(material.getStorageKey());
+        InputStreamResource resource = new InputStreamResource(inputStream);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + material.getFileName() + "\"")
+                .contentType(MediaType.parseMediaType(material.getFileType()))
+                .contentLength(material.getSizeBytes())
+                .body(resource);
     }
 }

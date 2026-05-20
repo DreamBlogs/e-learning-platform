@@ -60,6 +60,20 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+    @Transactional
+    public TaskResponse update(UUID userId, UUID taskId, UpdateTaskRequest request) {
+        Task task = taskRepository.findByIdAndUserId(taskId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task", taskId));
+        task.updateDetails(
+                request.subjectId(),
+                request.title(),
+                request.description(),
+                request.dueDate(),
+                request.priority() != null ? Task.Priority.valueOf(request.priority()) : null
+        );
+        return toResponse(taskRepository.save(task));
+    }
+
     public long countPending(UUID userId) {
         return taskRepository.countByUserIdAndCompleted(userId, false);
     }

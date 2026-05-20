@@ -138,6 +138,19 @@ public class QuizService {
         return attemptRepository.countBySubjectIdAndUserId(subjectId, userId);
     }
 
+    @Transactional
+    public void delete(UUID userId, UUID quizId) {
+        Quiz quiz = quizRepository.findByIdAndUserId(quizId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Quiz", quizId));
+        List<QuizAttempt> attempts = attemptRepository.findAllByQuizIdAndUserIdOrderByCreatedAtDesc(quizId, userId);
+        for (QuizAttempt attempt : attempts) {
+            answerRepository.deleteAll(answerRepository.findAllByAttemptId(attempt.getId()));
+        }
+        attemptRepository.deleteAll(attempts);
+        questionRepository.deleteAllByQuizId(quizId);
+        quizRepository.delete(quiz);
+    }
+
     private QuizResponse toResponse(Quiz quiz, int questionCount) {
         return new QuizResponse(
                 quiz.getId(),

@@ -28,6 +28,8 @@ import { useTopicMastery } from '@/hooks/useTopicMastery';
 import { useMaterials } from '@/hooks/useMaterials';
 import { useQuizzes } from '@/hooks/useQuizzes';
 import { api } from '@/lib/api/client';
+import { MaterialsUpload } from '@/components/materials-upload';
+import { QuizCreator } from '@/components/quiz-creator';
 import { cn } from '@/lib/utils';
 
 interface SubjectPageProps {
@@ -124,12 +126,6 @@ export default function SubjectPage({ params }: SubjectPageProps) {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{subject.name}</h1>
           <p className="text-muted-foreground">{avgConfidence}% avg confidence</p>
-        </div>
-        <div className="ml-auto flex gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => alert('Quiz generation coming soon')}>
-            <Sparkles className="h-4 w-4" />
-            Generate Quiz
-          </Button>
         </div>
       </div>
 
@@ -304,56 +300,7 @@ export default function SubjectPage({ params }: SubjectPageProps) {
               <CardTitle>Learning Materials</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {materialsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                ) : materials.length > 0 ? (
-                  materials.map((material) => (
-                    <div
-                      key={material.id}
-                      className="flex items-center gap-4 rounded-lg border p-4 transition-colors hover:bg-accent/50"
-                    >
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                        <FileText className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{material.fileName}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {material.fileType} &middot; Uploaded {new Date(material.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={cn(
-                            'rounded-full px-2 py-0.5 text-xs',
-                            material.status === 'PROCESSED'
-                              ? 'bg-emerald-500/10 text-emerald-500'
-                              : material.status === 'PROCESSING'
-                              ? 'bg-amber-500/10 text-amber-500'
-                              : material.status === 'FAILED'
-                              ? 'bg-red-500/10 text-red-500'
-                              : 'bg-blue-500/10 text-blue-500'
-                          )}
-                        >
-                          {material.status.toLowerCase()}
-                        </span>
-                        <Button variant="ghost" size="icon">
-                          <Play className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-12 text-center">
-                    <FileText className="mx-auto h-12 w-12 text-muted-foreground/50" />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      No materials uploaded yet
-                    </p>
-                  </div>
-                )}
-              </div>
+              <MaterialsUpload subjectId={subjectId} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -361,42 +308,10 @@ export default function SubjectPage({ params }: SubjectPageProps) {
         <TabsContent value="quizzes">
           <Card>
             <CardHeader>
-              <CardTitle>Quiz History</CardTitle>
+              <CardTitle>Quizzes</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {quizzesLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                ) : quizzes.length > 0 ? (
-                  quizzes.map((quiz) => (
-                    <Link
-                      key={quiz.id}
-                      href={`/subjects/${subjectId}/quizzes/${quiz.id}`}
-                      className="flex items-center gap-4 rounded-lg border p-4 transition-colors hover:bg-accent/50"
-                    >
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                        <HelpCircle className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">{quiz.title}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {quiz.questionCount} questions
-                        </p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </Link>
-                  ))
-                ) : (
-                  <div className="py-12 text-center">
-                    <HelpCircle className="mx-auto h-12 w-12 text-muted-foreground/50" />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      No quizzes taken yet
-                    </p>
-                  </div>
-                )}
-              </div>
+              <QuizCreator subjectId={subjectId} />
             </CardContent>
           </Card>
         </TabsContent>

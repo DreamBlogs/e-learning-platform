@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,5 +68,16 @@ public class MaterialController {
     @GetMapping("/materials/{materialId}/extracted-text")
     public ApiResponse<MaterialExtractedTextResponse> getExtractedText(@PathVariable UUID materialId) {
         return ApiResponse.ok(materialService.getExtractedText(currentUserProvider.get().id(), materialId));
+    }
+
+    @DeleteMapping("/materials/{materialId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID materialId) {
+        materialService.delete(currentUserProvider.get().id(), materialId);
+    }
+
+    @GetMapping("/materials/{materialId}/download")
+    public ResponseEntity<org.springframework.core.io.Resource> download(@PathVariable UUID materialId) {
+        return materialService.download(currentUserProvider.get().id(), materialId);
     }
 }

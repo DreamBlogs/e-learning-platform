@@ -3,8 +3,10 @@ package com.example.learning.tasks.api;
 import com.example.learning.tasks.application.CreateTaskRequest;
 import com.example.learning.tasks.application.TaskResponse;
 import com.example.learning.tasks.application.TaskService;
+import com.example.learning.tasks.application.UpdateTaskRequest;
 import com.example.learning.common.api.ApiResponse;
 import com.example.learning.common.application.CurrentUserProvider;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -51,5 +53,10 @@ public class TaskController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID taskId) {
         taskService.delete(currentUserProvider.get().id(), taskId);
+    }
+
+    @PatchMapping("/{taskId}")
+    public ApiResponse<TaskResponse> update(@PathVariable UUID taskId, @Valid @RequestBody UpdateTaskRequest request) {
+        return ApiResponse.ok(taskService.update(currentUserProvider.get().id(), taskId, request));
     }
 }

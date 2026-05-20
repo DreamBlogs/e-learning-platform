@@ -65,6 +65,14 @@ public class Task extends AuditableEntity {
         this.completed = false;
     }
 
+    public void updateDetails(UUID subjectId, String title, String description, Instant dueDate, Priority priority) {
+        this.subjectId = subjectId != null ? subjectId : this.subjectId;
+        this.title = title;
+        this.description = description != null ? description : this.description;
+        this.dueDate = dueDate != null ? dueDate : this.dueDate;
+        this.priority = priority != null ? priority : this.priority;
+    }
+
     public UUID getId() { return id; }
     public UUID getUserId() { return userId; }
     public UUID getSubjectId() { return subjectId; }
